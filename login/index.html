@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Shared base styles -->
+    <link rel="stylesheet" href="../shared/styles.css">
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h2 id="authTitle">Welcome Back</h2>
+        
+        <!-- Temporary navigation button -->
+        <div class="demo-nav">
+            <a href="../dashboard/index.html" class="nav-button">
+                Go to Dashboard (Demo)
+            </a>
+        </div>
+        
+        <!-- submit action -->
+        <form id="authForm">
+            <!-- Email input-->
+            <input type="email" id="email" placeholder="Email" required>
+            
+            <!-- Password input-->
+            <input type="password" id="password" placeholder="Password" required minlength="6">
+            
+            <!-- Submit button-->
+            <button type="submit" id="authButton">Sign In</button>
+        </form>
+
+        <div class="toggle-mode" id="toggleAuth">
+            Need an account? Sign Up
+        </div>
+    </div>
+</body>
+</html>

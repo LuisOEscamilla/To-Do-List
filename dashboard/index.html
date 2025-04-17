@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Shared base styles -->
+    <link rel="stylesheet" href="../shared/styles.css">
+    <!-- Dashboard-specific styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main app layout container -->
+    <div class="dashboard">
+        <!-- Sidebar Navigation: Will need JS routing -->
+        <nav class="sidebar" id="sidebar">
+        <!-- temp button section -->
+            <div class="demo-nav">
+                <a href="../login/index.html" class="nav-button">
+                    Logout (Demo)
+                </a>
+            </div>            
+
+            <h2>Menu</h2>
+            <ul>
+                <!-- data-page: Used for routing between sections -->
+                <li data-page="tasks">Today's Tasks</li>
+                <li data-page="goals">Goals</li>
+                <li data-page="friends">Friends</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <!--task submission -->
+            <section class="task-creator" id="taskCreator">
+                <input type="text" id="taskInput" placeholder="New task...">
+                
+                <select id="prioritySelect">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+                
+                <!-- event listener?-->
+                <button id="addTask">Add Task</button>
+            </section>
+
+            <!-- Task List: get from DB? -->
+            <section class="task-list" id="taskList">
+                <!-- example for now -->
+                <div class="task-card" data-priority="high" data-task-id="EXAMPLE_ID">
+                    <div class="task-content">
+                        <h3 class="task-title">Sample Task</h3>
+                        <p class="task-priority">Priority: High</p>
+                    </div>
+                    <!-- Checkbox -->
+                    <input type="checkbox" class="task-status">
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
