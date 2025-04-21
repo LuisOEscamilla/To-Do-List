@@ -1,37 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Shared base styles -->
-    <link rel="stylesheet" href="../shared/styles.css">
-    <!-- Page-specific styles -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Hub</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="auth-container">
-        <h2 id="authTitle">Welcome Back</h2>
-        
-        <!-- Temporary navigation button -->
+        <h1 class="app-title">To-Do Hub</h1>
+
         <div class="demo-nav">
             <a href="../dashboard/index.html" class="nav-button">
-                Go to Dashboard (Demo)
+                View Dashboard (Demo)
             </a>
         </div>
-        
-        <!-- submit action -->
+
         <form id="authForm">
-            <!-- Email input-->
             <input type="email" id="email" placeholder="Email" required>
-            
-            <!-- Password input-->
-            <input type="password" id="password" placeholder="Password" required minlength="6">
-            
-            <!-- Submit button-->
+            <input type="password" id="password" placeholder="Password" required>
             <button type="submit" id="authButton">Sign In</button>
         </form>
 
         <div class="toggle-mode" id="toggleAuth">
-            Need an account? Sign Up
+            New here? <a href="#" onclick="toggleAuthMode()">Create account</a>
         </div>
     </div>
+
+    <script>
+        function toggleAuthMode() {
+            const button = document.getElementById('authButton');
+            const toggleLink = document.querySelector('#toggleAuth a');
+            
+            button.textContent = button.textContent === 'Sign In' 
+                ? 'Sign Up' 
+                : 'Sign In';
+                
+            toggleLink.textContent = toggleLink.textContent === 'Create account' 
+                ? 'Sign in instead' 
+                : 'Create account';
+        }
+    </script>
 </body>
 </html>

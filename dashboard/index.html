@@ -30,19 +30,32 @@
 
         <!-- Main Content Area -->
         <main class="content">
-            <!--task submission -->
+            <!-- Task input section -->
             <section class="task-creator" id="taskCreator">
-                <input type="text" id="taskInput" placeholder="New task...">
-
-                <select id="prioritySelect">
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
-
-                <input type="date" id="dueDateInput">
-
-                <button id="addTask">Add Task</button>
+                <div class="task-creator__row">
+                    <!-- Main task input -->
+                    <input type="text" 
+                        id="taskInput" 
+                        placeholder="Task" 
+                        class="task-input">
+                    
+                    <!-- Priority dropdown -->
+                    <select id="prioritySelect" class="priority-select">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    
+                    <!-- Date picker -->
+                    <input type="date" 
+                        id="dueDateInput" 
+                        class="date-input">
+                    
+                    <!-- Add button -->
+                    <button id="addTask" class="task-add-button">
+                        Add
+                    </button>
+                </div>
             </section>
 
             <section class="calendar-section" id="calendar">
