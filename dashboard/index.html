@@ -11,19 +11,20 @@
     <div class="dashboard">
         <!-- Sidebar Navigation: Will need JS routing -->
         <nav class="sidebar" id="sidebar">
-        <!-- temp button section -->
+            <!-- temp button section -->
             <div class="demo-nav">
                 <a href="../login/index.html" class="nav-button">
                     Logout (Demo)
                 </a>
-            </div>            
+            </div>
 
             <h2>Menu</h2>
             <ul>
                 <!-- data-page: Used for routing between sections -->
-                <li data-page="tasks">Today's Tasks</li>
-                <li data-page="goals">Goals</li>
-                <li data-page="friends">Friends</li>
+                <li data-page="home" class="menu-item">Home</li>
+                <li data-page="tasks" class="menu-item">Today's Tasks</li>
+                <li data-page="goals" class="menu-item">Goals</li>
+                <li data-page="friends" class="menu-item">Friends</li>
             </ul>
         </nav>
 
@@ -32,15 +33,21 @@
             <!--task submission -->
             <section class="task-creator" id="taskCreator">
                 <input type="text" id="taskInput" placeholder="New task...">
-                
+
                 <select id="prioritySelect">
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
                 </select>
-                
-                <!-- event listener?-->
+
+                <input type="date" id="dueDateInput">
+
                 <button id="addTask">Add Task</button>
+            </section>
+
+            <section class="calendar-section" id="calendar">
+                <h2>Task Calendar</h2>
+                <div id="calendarGrid" class="calendar-grid"></div>
             </section>
 
             <!-- Task List: get from DB? -->
@@ -55,7 +62,19 @@
                     <input type="checkbox" class="task-status">
                 </div>
             </section>
+
+            <section class="goals-section" id="goalsSection" style="display: none;">
+                <h2>Goals</h2>
+                <p>This is where you can add your goals in the future.</p>
+            </section>
+
+            <section class="friends-section" id="friendsSection" style="display: none;">
+                <h2>Friends</h2>
+                <p>Connect with others (future feature).</p>
+            </section>
+
         </main>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
