@@ -65,25 +65,29 @@ document.addEventListener("DOMContentLoaded", () => {
         // Hide all sections
         document.getElementById("taskList").style.display = "none";
         document.getElementById("calendar").style.display = "none";
-        document.getElementById("goalsSection").style.display = "none";
+        document.getElementById("groupsSection").style.display = "none";
         document.getElementById("friendsSection").style.display = "none";
 
         // Show the selected section
         document.getElementById(sectionId).style.display = "block";
+
+        // TEAM: Only show task creator on calendar
+        document.getElementById("taskCreator").style.display = 
+        sectionId === "calendar" ? "block" : "none";
+
     }
 
     document.querySelectorAll(".menu-item").forEach(item => {
         item.addEventListener("click", () => {
             const page = item.getAttribute("data-page");
-
             if (page === "home") {
                 showSection("calendar");
                 renderCalendarTasks();
             } else if (page === "tasks") {
                 showSection("taskList");
-                showTodayTasks(); // Show only today's tasks
-            } else if (page === "goals") {
-                showSection("goalsSection");
+                showTodayTasks();
+            } else if (page === "groups") {  // Changed from goals
+                showSection("groupsSection");
             } else if (page === "friends") {
                 showSection("friendsSection");
             }
@@ -158,4 +162,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initial load
     renderCalendarTasks();
+
+    // TEAM: Basic profile dropdown toggle
+    const profileIcon = document.querySelector('.profile-icon');
+    const dropdown = document.querySelector('.dropdown-content');
+
+    profileIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Close dropdown when clicking elsewhere
+    window.addEventListener('click', () => {
+        dropdown.style.display = 'none';
+    });
+
 });

@@ -1,121 +1,35 @@
-/*BASE STYLES*/
-/* CSS Reset */
+/* Shared Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Color Variables */
 :root {
-    --primary-blue: #4a90e2;
-    --high-priority: #ef4444;
-    --medium-priority: #f59e0b;
-    --low-priority: #10b981;
+    --primary-color: #4299e1;
+    --text-color: #2d3748;
 }
 
-/*LAYOUT STRUCTURE */
+/* Dashboard Layout */
 .dashboard {
     display: grid;
-    grid-template-columns: 250px 1fr; /* Sidebar + Main content */
+    grid-template-columns: 220px 1fr;
     min-height: 100vh;
 }
 
-/* SIDEBAR COMPONENT*/
 .sidebar {
     background: #2d3748;
-    padding: 1rem;
     color: white;
-}
-
-/* TASK COMPONENTS */
-.task-creator {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: #fff;
+    padding: 20px;
 }
 
 .task-card {
+    background: white;
+    padding: 15px;
+    margin: 10px 0;
     border-left: 4px solid;
-    padding: 1rem;
-    margin: 0.5rem 0;
 }
 
-/* Priority color mapping*/
-[data-priority="high"] { border-color: var(--high-priority); }
-[data-priority="medium"] { border-color: var(--medium-priority); }
-[data-priority="low"] { border-color: var(--low-priority); }
-
-
-
-.menu-item {
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
-    .menu-item:hover {
-        background: #4a5568;
-    }
-
-/* Temporary navigation styling */
-.demo-nav {
-    text-align: center;
-    margin-top: 2rem;
-}
-
-.nav-button {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    background: #4a90e2;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    margin-top: 1rem;
-}
-
-.calendar-day {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    min-height: 100px;
-    position: relative;
-    background: #f9f9f9;
-}
-
-.calendar-day-name {
-    font-weight: bold;
-    text-align: center;
-    background: #e2e8f0;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-}
-
-.calendar-day.empty {
-    background: #f1f5f9;
-}
-
-
-    .calendar-day h4 {
-        margin: 0;
-        font-size: 0.9rem;
-    }
-
-.calendar-task {
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
-    padding: 2px 4px;
-    background: #eee;
-    border-left: 3px solid;
-}
-
-
-.nav-button:hover {
-    background: #357abd;
-}
+[data-priority="high"] { border-color: #f56565; }
+[data-priority="medium"] { border-color: #ecc94b; }
+[data-priority="low"] { border-color: #48bb78; }

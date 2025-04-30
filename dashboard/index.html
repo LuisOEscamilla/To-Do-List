@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Shared base styles -->
     <link rel="stylesheet" href="../shared/styles.css">
-    <!-- Dashboard-specific styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Main app layout container -->
+    <!-- Added header -->
+    <header class="main-header">
+        <h1 class="app-title">To-Do Hub</h1>
+        <!-- TEAM: Profile dropdown placeholder -->
+        <div class="profile-menu">
+            <div class="profile-icon"></div>
+            <div class="dropdown-content">
+                <button>Profile</button>
+                <button>Settings</button>
+            </div>
+        </div>
+    </header>
+    
     <div class="dashboard">
-        <!-- Sidebar Navigation: Will need JS routing -->
         <nav class="sidebar" id="sidebar">
-            <!-- temp button section -->
             <div class="demo-nav">
                 <a href="../login/index.html" class="nav-button">
                     Logout (Demo)
@@ -20,72 +28,70 @@
 
             <h2>Menu</h2>
             <ul>
-                <!-- data-page: Used for routing between sections -->
                 <li data-page="home" class="menu-item">Home</li>
                 <li data-page="tasks" class="menu-item">Today's Tasks</li>
-                <li data-page="goals" class="menu-item">Goals</li>
+                <!-- Changed from Goals to Group Lists -->
+                <li data-page="groups" class="menu-item">Group Lists</li>
                 <li data-page="friends" class="menu-item">Friends</li>
             </ul>
         </nav>
 
-        <!-- Main Content Area -->
         <main class="content">
-            <!-- Task input section -->
-            <section class="task-creator" id="taskCreator">
-                <div class="task-creator__row">
-                    <!-- Main task input -->
-                    <input type="text" 
-                        id="taskInput" 
-                        placeholder="Task" 
-                        class="task-input">
-                    
-                    <!-- Priority dropdown -->
-                    <select id="prioritySelect" class="priority-select">
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                    
-                    <!-- Date picker -->
-                    <input type="date" 
-                        id="dueDateInput" 
-                        class="date-input">
-                    
-                    <!-- Add button -->
-                    <button id="addTask" class="task-add-button">
-                        Add
-                    </button>
-                </div>
-            </section>
-
+            <!-- Moved task creator inside calendar section -->
             <section class="calendar-section" id="calendar">
+                <!-- TEAM: Task input now only visible here -->
+                <div class="task-creator" id="taskCreator">
+                    <div class="task-creator__row">
+                        <input type="text" 
+                            id="taskInput" 
+                            placeholder="Task" 
+                            class="task-input">
+                        <select id="prioritySelect" class="priority-select">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                        <input type="date" 
+                            id="dueDateInput" 
+                            class="date-input">
+                        <button id="addTask" class="task-add-button">
+                            Add
+                        </button>
+                    </div>
+                </div>
+                
                 <h2>Task Calendar</h2>
                 <div id="calendarGrid" class="calendar-grid"></div>
             </section>
 
-            <!-- Task List: get from DB? -->
             <section class="task-list" id="taskList">
-                <!-- example for now -->
                 <div class="task-card" data-priority="high" data-task-id="EXAMPLE_ID">
                     <div class="task-content">
                         <h3 class="task-title">Sample Task</h3>
                         <p class="task-priority">Priority: High</p>
                     </div>
-                    <!-- Checkbox -->
                     <input type="checkbox" class="task-status">
                 </div>
             </section>
 
-            <section class="goals-section" id="goalsSection" style="display: none;">
-                <h2>Goals</h2>
-                <p>This is where you can add your goals in the future.</p>
+            <!-- Changed from Goals to Group Lists -->
+            <section class="groups-section" id="groupsSection" style="display: none;">
+                <h2>Group Lists</h2>
+                <p>Collaborative group tasks will appear here</p>
             </section>
 
+            <!-- Added friend search bar -->
             <section class="friends-section" id="friendsSection" style="display: none;">
+                <div class="friends-header">
+                    <!-- TEAM: Add search functionality later -->
+                    <input type="text" 
+                        id="friendSearch" 
+                        placeholder="Search friends..." 
+                        class="friend-search">
+                </div>
                 <h2>Friends</h2>
                 <p>Connect with others (future feature).</p>
             </section>
-
         </main>
     </div>
     <script src="script.js"></script>

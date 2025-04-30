@@ -1,45 +1,185 @@
-/* Task input section */
-.task-creator {
-    background: white;
-    padding: 1rem;
-    border-radius: 4px;
-    margin: 1rem 0;
+/* Dashboard Specific Styles */
+.content {
+    padding: 1.5rem;
 }
 
-.task-creator__row {
+.main-header {
     display: flex;
-    gap: 0.5rem;
+    justify-content: space-between;
     align-items: center;
+    padding: 1rem;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.app-title {
+    color: #2d3748;
+    font-size: 1.3rem;
+    margin-left: 1rem;
+}
+
+/* Basic profile dropdown */
+.profile-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #e2e8f0; /* Simpler gray */
+    cursor: pointer;
+    margin-right: 1rem;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 10px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem;
+}
+
+/* Task creator - simpler */
+.calendar-section .task-creator {
+    margin-bottom: 1rem;
+    background: #f8fafc;
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+/* Friend search - basic */
+.friend-search {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+}
+
+/* Base text styles - matches login */
+body {
+    font-family: Arial, sans-serif;
+    color: #2d3748;
+    font-size: 14px;
+}
+
+.task-creator {
+    background: rgb(255, 255, 255);
+    padding: 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .task-input {
     flex: 1;
-    padding: 0.6rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
 }
 
-.priority-select {
-    padding: 0.6rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.date-input {
-    padding: 0.6rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.priority-select, .date-input {
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
 }
 
 .task-add-button {
-    background: #3498db;
+    background: #4299e1;
     color: white;
-    padding: 0.6rem 1rem;
+    padding: 0.8rem 1.2rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    transition: background 0.2s;
 }
 
 .task-add-button:hover {
-    background: #2980b9;
+    background: #59a2e6;
+}
+
+.menu-item {
+    padding: 0.8rem;
+    cursor: pointer;
+    margin: 0.4rem 0;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.menu-item:hover {
+    background: #4a5568;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+/* Dashboard Specific Styles */
+
+/* Calendar Styles */
+.calendar-section {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    border: 1px solid #e2e8f0;
+    margin-top: 1rem;
+}
+
+.calendar-day-name {
+    background: #f7fafc;
+    padding: 0.5rem;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    font-weight: 500;
+}
+
+.calendar-day {
+    min-height: 80px;
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: white;
+    position: relative;
+}
+
+.calendar-day.empty {
+    background: #f7fafc;
+}
+
+.calendar-task {
+    font-size: 0.8rem;
+    padding: 2px 4px;
+    margin: 2px 0;
+    background: #ebf8ff;
+    border-left: 2px solid #4299e1;
+    border-radius: 2px;
+}
+
+/* New friend search style */
+.friend-search {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+/* Adjusted task creator position */
+.calendar-section .task-creator {
+    margin-bottom: 1.5rem;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
