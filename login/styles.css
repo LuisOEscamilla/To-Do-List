@@ -64,3 +64,15 @@ button[type="submit"] {
     color: #4299e1;
     text-decoration: none;
 }
+
+/* Signup specific fields */
+.signup-field {
+    margin-bottom: 0.5rem;
+}
+
+.password-requirements {
+    color: #666;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+    text-align: center;
+}

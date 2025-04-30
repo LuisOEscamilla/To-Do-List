@@ -17,13 +17,22 @@
         </div>
 
         <form id="authForm">
+            <!-- Added name field for signup -->
+            <input type="text" id="name" placeholder="Full Name" class="signup-field" style="display: none;">
             <input type="email" id="email" placeholder="Email" required>
             <input type="password" id="password" placeholder="Password" required>
+            <!-- Added password confirmation -->
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" class="signup-field" style="display: none;">
             <button type="submit" id="authButton">Sign In</button>
         </form>
 
+        <!-- Added password requirements -->
+        <div class="password-requirements" style="display: none;">
+            Password must be at least 8 characters
+        </div>
+
         <div class="toggle-mode" id="toggleAuth">
-            New here? <a href="#" onclick="toggleAuthMode()">Create account</a>
+            <a href="#" onclick="toggleAuthMode()">Create account</a>
         </div>
     </div>
 
@@ -31,15 +40,45 @@
         function toggleAuthMode() {
             const button = document.getElementById('authButton');
             const toggleLink = document.querySelector('#toggleAuth a');
-            
-            button.textContent = button.textContent === 'Sign In' 
-                ? 'Sign Up' 
-                : 'Sign In';
-                
-            toggleLink.textContent = toggleLink.textContent === 'Create account' 
-                ? 'Sign in instead' 
-                : 'Create account';
+            const signupFields = document.querySelectorAll('.signup-field');
+            const pwRequirements = document.querySelector('.password-requirements');
+
+            if (button.textContent === 'Sign In') {
+                // Switch to signup mode
+                button.textContent = 'Sign Up';
+                toggleLink.textContent = 'Sign in instead';
+                signupFields.forEach(field => field.style.display = 'block');
+                pwRequirements.style.display = 'block';
+            } else {
+                // Switch to signin mode
+                button.textContent = 'Sign In';
+                toggleLink.textContent = 'Create account';
+                signupFields.forEach(field => field.style.display = 'none');
+                pwRequirements.style.display = 'none';
+            }
         }
+
+        // TEAM: Add basic password validation
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            const isSignUp = document.getElementById('authButton').textContent === 'Sign Up';
+            
+            if (isSignUp) {
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Check password requirements
+                if (password.length < 8) {
+                    alert('Password must be at least 8 characters');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match!');
+                    e.preventDefault();
+                }
+            }
+        });
     </script>
 </body>
 </html>
