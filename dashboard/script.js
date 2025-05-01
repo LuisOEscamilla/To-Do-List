@@ -178,3 +178,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+async function addFriend() {
+    const username = document.getElementById("friendUsername").value;
+    try {
+        const res = await fetch("/api/friends/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ friendUsername: username })
+        });
+        if (!res.ok) throw new Error((await res.json()).message);
+        loadFriends();
+    } catch (err) {
+        alert(err.message);
+    }
+}
+
+async function loadFriends() {
+    try {
+        const res = await fetch("/api/friends/list");
+        const { friends } = await res.json();
+        const list = document.getElementById("friendsList");
+        list.innerHTML = friends.map(f => 
+            `<li class="task-card">${f.username}</li>`
+        ).join("");
+    } catch (err) {
+        console.error("Failed loading friends");
+    }
+}
+
+// Add click handler to friends menu item
+document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);
