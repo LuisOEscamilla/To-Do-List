@@ -196,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-});
 
 async function addFriend() {
     const username = document.getElementById("friendUsername").value;
@@ -226,9 +225,8 @@ async function loadFriends() {
     }
 }
 
-// Add click handler to friends menu item
-document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);
-=======
+    // Add click handler to friends menu item
+    document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);
     // Initial load
     renderCalendarTasks();
     document.querySelector('[data-page="home"]').click();
