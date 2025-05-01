@@ -4,9 +4,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const dueDateInput = document.getElementById("dueDateInput");
     const addTaskBtn = document.getElementById("addTask");
     const taskList = document.getElementById("taskList");
+    const profileIcon = document.querySelector('.profile-icon');
+    const dropdown = document.querySelector('.dropdown-content');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
-    
     let tasks = []; // All task data
+    let currentOpenDropdown = null; // Track open dropdowns
 
     function getPriorityColor(priority) {
         return {
@@ -73,8 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // TEAM: Only show task creator on calendar
         document.getElementById("taskCreator").style.display = 
-        sectionId === "calendar" ? "block" : "none";
-
+            sectionId === "calendar" ? "block" : "none";
     }
 
     document.querySelectorAll(".menu-item").forEach(item => {
@@ -86,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (page === "tasks") {
                 showSection("taskList");
                 showTodayTasks();
-            } else if (page === "groups") {  // Changed from goals
+            } else if (page === "groups") {
                 showSection("groupsSection");
             } else if (page === "friends") {
                 showSection("friendsSection");
@@ -95,33 +97,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function showTodayTasks() {
-        const todayStr = new Date().toISOString().split("T")[0]; // Format: yyyy-mm-dd
+        const todayStr = new Date().toISOString().split("T")[0];
         const taskList = document.getElementById("taskList");
-        taskList.innerHTML = ""; // Clear old tasks
+        taskList.innerHTML = "";
 
         const todayTasks = tasks.filter(t => t.dueDate === todayStr);
+        const sortedTasks = sortTasks(todayTasks);
 
-        if (todayTasks.length === 0) {
+        if (sortedTasks.length === 0) {
             taskList.innerHTML = "<p>No tasks due today.</p>";
             return;
         }
 
-        todayTasks.forEach(t => {
+        sortedTasks.forEach(t => {
             const taskCard = document.createElement("div");
             taskCard.classList.add("task-card");
             taskCard.setAttribute("data-priority", t.priority);
             taskCard.innerHTML = `
-            <div class="task-content">
-                <h3 class="task-title">${t.title}</h3>
-                <p class="task-priority">Priority: ${t.priority}</p>
-                <p class="task-due">Due: ${t.dueDate}</p>
-            </div>
-            <input type="checkbox" class="task-status">
-        `;
+                <div class="task-content">
+                    <h3 class="task-title">${t.title}</h3>
+                    <p class="task-priority">Priority: ${t.priority}</p>
+                    <p class="task-due">Due: ${t.dueDate}</p>
+                </div>
+                <input type="checkbox" class="task-status">
+            `;
             taskList.appendChild(taskCard);
         });
     }
 
+    function sortTasks(tasks) {
+        const priorityOrder = { high: 1, medium: 2, low: 3 };
+        return [...tasks].sort((a, b) => 
+            priorityOrder[a.priority] - priorityOrder[b.priority]
+        );
+    }
 
     addTaskBtn.addEventListener("click", () => {
         const taskText = taskInput.value.trim();
@@ -143,12 +152,9 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         taskList.appendChild(taskCard);
-
-        // Save to task array
         tasks.push({ title: taskText, priority, dueDate });
         renderCalendarTasks();
 
-        // Reset form
         taskInput.value = "";
         dueDateInput.value = "";
         prioritySelect.value = "low";
@@ -160,21 +166,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Initial load
-    renderCalendarTasks();
-
-    // TEAM: Basic profile dropdown toggle
-    const profileIcon = document.querySelector('.profile-icon');
-    const dropdown = document.querySelector('.dropdown-content');
-
     profileIcon.addEventListener('click', (e) => {
         e.stopPropagation();
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        toggleDropdown(dropdown);
     });
 
-    // Close dropdown when clicking elsewhere
+    document.querySelector('.settings-menu').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const settingsDropdown = document.querySelector('.settings-dropdown');
+        toggleDropdown(settingsDropdown);
+    });
+
+    function toggleDropdown(element) {
+        if (currentOpenDropdown && currentOpenDropdown !== element) {
+            currentOpenDropdown.style.display = 'none';
+        }
+        element.style.display = element.style.display === 'block' ? 'none' : 'block';
+        currentOpenDropdown = element;
+    }
+
+    darkModeToggle.addEventListener('change', () => {
+        document.documentElement.classList.toggle('dark-mode', darkModeToggle.checked);
+    });
+
     window.addEventListener('click', () => {
-        dropdown.style.display = 'none';
+        if (currentOpenDropdown) {
+            currentOpenDropdown.style.display = 'none';
+            currentOpenDropdown = null;
+        }
     });
 
+    // Initial load
+    renderCalendarTasks();
+    document.querySelector('[data-page="home"]').click();
 });

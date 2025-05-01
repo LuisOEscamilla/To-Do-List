@@ -5,19 +5,27 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Added header -->
+    <!-- Header with profile dropdown -->
     <header class="main-header">
         <h1 class="app-title">To-Do Hub</h1>
-        <!-- TEAM: Profile dropdown placeholder -->
         <div class="profile-menu">
             <div class="profile-icon"></div>
             <div class="dropdown-content">
-                <button>Profile</button>
-                <button>Settings</button>
+                <button class="dropdown-item">Profile</button>
+                <div class="settings-menu">
+                    <button class="dropdown-item">Settings ⏷</button>
+                    <!-- TEAM: Dark mode toggle -->
+                    <div class="settings-dropdown">
+                        <div class="dark-mode-toggle">
+                            <label>Dark Mode</label>
+                            <input type="checkbox" id="darkModeToggle">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
-    
+
     <div class="dashboard">
         <nav class="sidebar" id="sidebar">
             <div class="demo-nav">
@@ -25,69 +33,53 @@
                     Logout (Demo)
                 </a>
             </div>
-
             <h2>Menu</h2>
             <ul>
                 <li data-page="home" class="menu-item">Home</li>
                 <li data-page="tasks" class="menu-item">Today's Tasks</li>
-                <!-- Changed from Goals to Group Lists -->
                 <li data-page="groups" class="menu-item">Group Lists</li>
                 <li data-page="friends" class="menu-item">Friends</li>
             </ul>
         </nav>
 
         <main class="content">
-            <!-- Moved task creator inside calendar section -->
+            <!-- Calendar Section -->
             <section class="calendar-section" id="calendar">
-                <!-- TEAM: Task input now only visible here -->
                 <div class="task-creator" id="taskCreator">
                     <div class="task-creator__row">
-                        <input type="text" 
-                            id="taskInput" 
-                            placeholder="Task" 
-                            class="task-input">
+                        <input type="text" id="taskInput" placeholder="Task">
                         <select id="prioritySelect" class="priority-select">
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
                             <option value="high">High</option>
                         </select>
-                        <input type="date" 
-                            id="dueDateInput" 
-                            class="date-input">
-                        <button id="addTask" class="task-add-button">
-                            Add
-                        </button>
+                        <input type="date" id="dueDateInput" class="date-input">
+                        <button id="addTask" class="task-add-button">Add</button>
                     </div>
                 </div>
-                
                 <h2>Task Calendar</h2>
                 <div id="calendarGrid" class="calendar-grid"></div>
             </section>
 
-            <section class="task-list" id="taskList">
-                <div class="task-card" data-priority="high" data-task-id="EXAMPLE_ID">
-                    <div class="task-content">
-                        <h3 class="task-title">Sample Task</h3>
-                        <p class="task-priority">Priority: High</p>
-                    </div>
-                    <input type="checkbox" class="task-status">
-                </div>
+            <!-- Today's Tasks -->
+            <section class="task-list" id="taskList" style="display: none;">
+                <!-- Tasks injected via JS -->
             </section>
 
-            <!-- Changed from Goals to Group Lists -->
+            <!-- Group Lists -->
             <section class="groups-section" id="groupsSection" style="display: none;">
-                <h2>Group Lists</h2>
+                <div class="section-header">
+                    <h2>Group Lists</h2>
+                    <!-- TEAM: Add group functionality -->
+                    <button class="task-add-button">+ New Group</button>
+                </div>
                 <p>Collaborative group tasks will appear here</p>
             </section>
 
-            <!-- Added friend search bar -->
+            <!-- Friends Section -->
             <section class="friends-section" id="friendsSection" style="display: none;">
                 <div class="friends-header">
-                    <!-- TEAM: Add search functionality later -->
-                    <input type="text" 
-                        id="friendSearch" 
-                        placeholder="Search friends..." 
-                        class="friend-search">
+                    <input type="text" id="friendSearch" placeholder="Search friends..." class="friend-search">
                 </div>
                 <h2>Friends</h2>
                 <p>Connect with others (future feature).</p>

@@ -33,3 +33,38 @@
 [data-priority="high"] { border-color: #f56565; }
 [data-priority="medium"] { border-color: #ecc94b; }
 [data-priority="low"] { border-color: #48bb78; }
+
+/* Dark mode - TEAM: add more styles as needed */
+.dark-mode {
+    background: #1a1a1a;
+    color: #ffffff;
+    --text-color: white;
+}
+
+.dark-mode .sidebar {
+    background: #2a2a2a;
+}
+
+.dark-mode .task-card {
+    background: #333333;
+}
+
+/* NEW ADDITIONS BELOW - TEAM: Dark mode extensions */
+.dark-mode .main-header,
+.dark-mode .calendar-section,
+.dark-mode .task-creator {
+    background: #2d2d2d;
+    border-color: #404040;
+}
+
+.dark-mode .menu-item:hover {
+    background: #3a3a3a;
+}
+
+.dark-mode .app-title{
+      color: white;
+}
+
+.dark-mode .main-header{
+    color: white;
+}
