@@ -12,6 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
 
     let tasks = []; // All task data
+    async function loadTasks() {
+        try {
+            const res = await fetch("/api/tasks");
+            const data = await res.json();
+            tasks = data.tasks;
+            renderCalendarTasks();
+            showTodayTasks();
+        } catch (err) {
+            console.error("Failed to load tasks:", err);
+        }
+    }
+
     let currentOpenDropdown = null; // Track open dropdowns
 
     function getPriorityColor(priority) {
@@ -55,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dayEl.classList.add("calendar-day");
             dayEl.innerHTML = `<h4>${i}</h4>`;
 
-            tasks.filter(t => t.dueDate === dateStr).forEach(t => {
+            tasks.filter(t => t.dueDate === dateStr && !t.completed).forEach(t => {
                 const taskEl = document.createElement("div");
                 taskEl.classList.add("calendar-task");
                 taskEl.style.borderColor = getPriorityColor(t.priority);
@@ -104,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const taskList = document.getElementById("taskList");
         taskList.innerHTML = "";
 
-        const todayTasks = tasks.filter(t => t.dueDate === todayStr);
+        const todayTasks = tasks.filter(t => t.dueDate === todayStr && !t.completed);
         const sortedTasks = sortTasks(todayTasks);
 
         if (sortedTasks.length === 0) {
@@ -135,13 +147,33 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    addTaskBtn.addEventListener("click", () => {
+    addTaskBtn.addEventListener("click", async () => {
         const taskText = taskInput.value.trim();
         const priority = prioritySelect.value;
         const dueDate = dueDateInput.value;
-
+    
         if (!taskText) return;
-
+    
+        // Save to server
+        try {
+            const res = await fetch("/api/tasks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: taskText, priority, dueDate })
+            });
+    
+            if (!res.ok) {
+                const error = await res.json();
+                alert("Failed to save task: " + error.message);
+                return;
+            }
+        } catch (err) {
+            console.error("Error saving task:", err);
+            alert("Could not save task. Please try again.");
+            return;
+        }
+    
+        // Update local state and UI
         const taskCard = document.createElement("div");
         taskCard.classList.add("task-card");
         taskCard.setAttribute("data-priority", priority);
@@ -153,21 +185,42 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <input type="checkbox" class="task-status">
         `;
-
+    
         taskList.appendChild(taskCard);
         tasks.push({ title: taskText, priority, dueDate });
         renderCalendarTasks();
-
+    
         taskInput.value = "";
         dueDateInput.value = "";
         prioritySelect.value = "low";
     });
-
-    taskList.addEventListener("change", (e) => {
+    
+    taskList.addEventListener("change", async (e) => {
         if (e.target.classList.contains("task-status")) {
-            e.target.closest(".task-card").classList.toggle("completed");
+            const card = e.target.closest(".task-card");
+            card.classList.toggle("completed");
+    
+            const title = card.querySelector(".task-title").textContent;
+            const dueDate = card.querySelector(".task-due").textContent.replace("Due: ", "");
+    
+            try {
+                await fetch("/api/tasks/complete", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, dueDate })
+                });
+    
+                // Update local array
+                const task = tasks.find(t => t.title === title && t.dueDate === dueDate);
+                if (task) task.completed = true;
+    
+                renderCalendarTasks(); // refresh view
+            } catch (err) {
+                console.error("Failed to mark complete:", err);
+            }
         }
     });
+    
 
     // ===== DROPDOWNS =====
     // TEAM: toggle the main profile dropdown
@@ -232,6 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add click handler to friends menu item
     document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);
     // Initial load
-    renderCalendarTasks();
+    loadTasks(); // Fetch tasks from MongoDB
     document.querySelector('[data-page="home"]').click();
+
+
 });
