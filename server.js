@@ -42,8 +42,10 @@ app.use("/dashboard", express.static("dashboard"));
 // Add the exact routes from LoginSystem
 const authRoutes = require("./routes/auth");
 const friendsRoutes = require("./routes/friends");
+const tasksRoutes = require("./routes/tasks");
 app.use("/api/auth", authRoutes);
 app.use("/api/friends", friendsRoutes);
+app.use("/api/tasks", tasksRoutes);
 
 // Existing page routes
 app.get("/", (req, res) => res.redirect("/login"));

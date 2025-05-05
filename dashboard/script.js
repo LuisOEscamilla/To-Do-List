@@ -9,6 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
 
     let tasks = []; // All task data
+    async function loadTasks() {
+        try {
+            const res = await fetch("/api/tasks");
+            const data = await res.json();
+            tasks = data.tasks;
+            renderCalendarTasks();
+            showTodayTasks();
+        } catch (err) {
+            console.error("Failed to load tasks:", err);
+        }
+    }
+
     let currentOpenDropdown = null; // Track open dropdowns
 
     function getPriorityColor(priority) {
@@ -132,13 +144,33 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    addTaskBtn.addEventListener("click", () => {
+    addTaskBtn.addEventListener("click", async () => {
         const taskText = taskInput.value.trim();
         const priority = prioritySelect.value;
         const dueDate = dueDateInput.value;
-
+    
         if (!taskText) return;
-
+    
+        // Save to server
+        try {
+            const res = await fetch("/api/tasks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: taskText, priority, dueDate })
+            });
+    
+            if (!res.ok) {
+                const error = await res.json();
+                alert("Failed to save task: " + error.message);
+                return;
+            }
+        } catch (err) {
+            console.error("Error saving task:", err);
+            alert("Could not save task. Please try again.");
+            return;
+        }
+    
+        // Update local state and UI
         const taskCard = document.createElement("div");
         taskCard.classList.add("task-card");
         taskCard.setAttribute("data-priority", priority);
@@ -150,15 +182,16 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <input type="checkbox" class="task-status">
         `;
-
+    
         taskList.appendChild(taskCard);
         tasks.push({ title: taskText, priority, dueDate });
         renderCalendarTasks();
-
+    
         taskInput.value = "";
         dueDateInput.value = "";
         prioritySelect.value = "low";
     });
+    
 
     taskList.addEventListener("change", (e) => {
         if (e.target.classList.contains("task-status")) {
@@ -228,6 +261,8 @@ async function loadFriends() {
     // Add click handler to friends menu item
     document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);
     // Initial load
-    renderCalendarTasks();
+    loadTasks(); // Fetch tasks from MongoDB
     document.querySelector('[data-page="home"]').click();
+
+
 });
