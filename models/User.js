@@ -8,8 +8,9 @@ const userSchema = new mongoose.Schema({
     tasks: [{
         title: String,
         priority: String,
-        dueDate: String
-    }]
+        dueDate: String,
+        completed: { type: Boolean, default: false }
+    }]      
 });
 
 module.exports = mongoose.model("User", userSchema);

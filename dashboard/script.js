@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dayEl.classList.add("calendar-day");
             dayEl.innerHTML = `<h4>${i}</h4>`;
 
-            tasks.filter(t => t.dueDate === dateStr).forEach(t => {
+            tasks.filter(t => t.dueDate === dateStr && !t.completed).forEach(t => {
                 const taskEl = document.createElement("div");
                 taskEl.classList.add("calendar-task");
                 taskEl.style.borderColor = getPriorityColor(t.priority);
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const taskList = document.getElementById("taskList");
         taskList.innerHTML = "";
 
-        const todayTasks = tasks.filter(t => t.dueDate === todayStr);
+        const todayTasks = tasks.filter(t => t.dueDate === todayStr && !t.completed);
         const sortedTasks = sortTasks(todayTasks);
 
         if (sortedTasks.length === 0) {
@@ -192,12 +192,32 @@ document.addEventListener("DOMContentLoaded", () => {
         prioritySelect.value = "low";
     });
     
-
-    taskList.addEventListener("change", (e) => {
+    taskList.addEventListener("change", async (e) => {
         if (e.target.classList.contains("task-status")) {
-            e.target.closest(".task-card").classList.toggle("completed");
+            const card = e.target.closest(".task-card");
+            card.classList.toggle("completed");
+    
+            const title = card.querySelector(".task-title").textContent;
+            const dueDate = card.querySelector(".task-due").textContent.replace("Due: ", "");
+    
+            try {
+                await fetch("/api/tasks/complete", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, dueDate })
+                });
+    
+                // Update local array
+                const task = tasks.find(t => t.title === title && t.dueDate === dueDate);
+                if (task) task.completed = true;
+    
+                renderCalendarTasks(); // refresh view
+            } catch (err) {
+                console.error("Failed to mark complete:", err);
+            }
         }
     });
+    
 
     profileIcon.addEventListener('click', (e) => {
         e.stopPropagation();
