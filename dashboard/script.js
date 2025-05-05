@@ -72,6 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 taskEl.classList.add("calendar-task");
                 taskEl.style.borderColor = getPriorityColor(t.priority);
                 taskEl.textContent = t.title;
+
+                if (t.group) {
+                    taskEl.classList.add("group-task");
+                    taskEl.textContent += ` (Group: ${t.group})`;
+                    taskEl.style.backgroundColor = "rgba(0, 123, 255, 0.15)"; // subtle blue background
+                }
+
                 dayEl.appendChild(taskEl);
             });
 

@@ -5,28 +5,28 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    
-  <!-- Header with profile dropdown -->
-  <header class="main-header">
-    <h1 class="app-title">To-Do Hub</h1>
-    <div class="profile-menu">
-      <div class="profile-icon"></div>
-      <!-- TEAM: hide by default -->
-      <div class="dropdown-content" style="display: none;">
-        <button class="dropdown-item">Profile</button>
-        <div class="settings-menu">
-          <button class="dropdown-item">Settings ⏷</button>
-          <!-- TEAM: hide by default -->
-          <div class="settings-dropdown" style="display: none;">
-            <div class="dark-mode-toggle">
-              <label for="darkModeToggle">Dark Mode</label>
-              <input type="checkbox" id="darkModeToggle" class="dropdown-item">
+
+    <!-- Header with profile dropdown -->
+    <header class="main-header">
+        <h1 class="app-title">To-Do Hub</h1>
+        <div class="profile-menu">
+            <div class="profile-icon"></div>
+            <!-- TEAM: hide by default -->
+            <div class="dropdown-content" style="display: none;">
+                <button class="dropdown-item">Profile</button>
+                <div class="settings-menu">
+                    <button class="dropdown-item">Settings ⏷</button>
+                    <!-- TEAM: hide by default -->
+                    <div class="settings-dropdown" style="display: none;">
+                        <div class="dark-mode-toggle">
+                            <label for="darkModeToggle">Dark Mode</label>
+                            <input type="checkbox" id="darkModeToggle" class="dropdown-item">
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </header>
+    </header>
 
     <div class="dashboard">
         <nav class="sidebar" id="sidebar">
@@ -72,9 +72,9 @@
             <section class="groups-section" id="groupsSection" style="display: none;">
                 <div class="section-header">
                     <h2>Group Lists</h2>
-                    <!-- TEAM: Add group functionality -->
-                    <button class="task-add-button">+ New Group</button>
+                    <button id="createGroupBtn" class="task-add-button">+ New Group</button>
                 </div>
+                <div id="groupContainer"></div>
                 <p>Collaborative group tasks will appear here</p>
             </section>
 
@@ -93,6 +93,11 @@
             </section>
         </main>
     </div>
+    <script>
+        window.tasks = window.tasks || [];
+    </script>
     <script src="script.js"></script>
+    <script src="group.js"></script>
+
 </body>
 </html>

@@ -194,6 +194,79 @@ body {
     padding: 0.5rem 1rem;
 }
 
+.calendar-group-mark {
+    background-color: rgba(100, 100, 255, 0.7);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 2px auto;
+}
+
+.group-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fafafa;
+}
+
+.calendar-day-name {
+    text-align: center;
+    font-weight: bold;
+    background: #eaeaea;
+    padding: 6px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.calendar-day {
+    background: #fff;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    min-height: 60px;
+    font-size: 12px;
+    position: relative;
+}
+
+.date-label {
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.task-banner {
+    margin-top: 2px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    /* Priority-based colors */
+    .task-banner.low {
+        background-color: #4CAF50;
+    }
+
+    .task-banner.medium {
+        background-color: #FFA500;
+    }
+
+    .task-banner.high {
+        background-color: #F44336;
+    }
+
+
+.date-label {
+    font-weight: bold;
+}
+
+
 /* TEAM: Match existing button styles */
 #darkModeToggle {
     accent-color: #4299e1;
