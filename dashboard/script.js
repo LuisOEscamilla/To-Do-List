@@ -4,8 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const dueDateInput = document.getElementById("dueDateInput");
     const addTaskBtn = document.getElementById("addTask");
     const taskList = document.getElementById("taskList");
-    const profileIcon = document.querySelector('.profile-icon');
-    const dropdown = document.querySelector('.dropdown-content');
+    const profileMenu = document.querySelector('.profile-menu');
+    const profileIcon = profileMenu.querySelector('.profile-icon');
+    const dropdownContent = profileMenu.querySelector('.dropdown-content');
+    const settingsMenu = dropdownContent.querySelector('.settings-menu');
+    const settingsDropdown = settingsMenu.querySelector('.settings-dropdown');
     const darkModeToggle = document.getElementById('darkModeToggle');
 
     let tasks = []; // All task data
@@ -166,64 +169,65 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    profileIcon.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleDropdown(dropdown);
+    // ===== DROPDOWNS =====
+    // TEAM: toggle the main profile dropdown
+    profileIcon.addEventListener('click', e => {
+        e.stopPropagation(); // prevent window click from closing it
+        const open = dropdownContent.style.display === 'block';
+        dropdownContent.style.display = open ? 'none' : 'block';
     });
-
-    document.querySelector('.settings-menu').addEventListener('click', (e) => {
-        e.stopPropagation();
-        const settingsDropdown = document.querySelector('.settings-dropdown');
-        toggleDropdown(settingsDropdown);
+    
+    // TEAM: toggle just the settings dropdown
+    settingsMenu.addEventListener('click', e => {
+        e.stopPropagation(); // prevent window click from closing it
+        const open = settingsDropdown.style.display === 'block';
+        settingsDropdown.style.display = open ? 'none' : 'block';
     });
-
-    function toggleDropdown(element) {
-        if (currentOpenDropdown && currentOpenDropdown !== element) {
-            currentOpenDropdown.style.display = 'none';
+    
+    // TEAM: clicking outside profile-menu closes everything
+    window.addEventListener('click', e => {
+        if (!e.target.closest('.profile-menu')) {
+        dropdownContent.style.display  = 'none';
+        settingsDropdown.style.display = 'none';
         }
-        element.style.display = element.style.display === 'block' ? 'none' : 'block';
-        currentOpenDropdown = element;
-    }
-
+    });
+    
+    // TEAM: dark mode switch
     darkModeToggle.addEventListener('change', () => {
-        document.documentElement.classList.toggle('dark-mode', darkModeToggle.checked);
+        document.documentElement.classList.toggle(
+        'dark-mode',
+        darkModeToggle.checked
+        );
     });
 
-    window.addEventListener('click', () => {
-        if (currentOpenDropdown) {
-            currentOpenDropdown.style.display = 'none';
-            currentOpenDropdown = null;
+
+    async function addFriend() {
+        const username = document.getElementById("friendUsername").value;
+        try {
+            const res = await fetch("/api/friends/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ friendUsername: username })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            loadFriends();
+        } catch (err) {
+            alert(err.message);
         }
-    });
-
-
-async function addFriend() {
-    const username = document.getElementById("friendUsername").value;
-    try {
-        const res = await fetch("/api/friends/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ friendUsername: username })
-        });
-        if (!res.ok) throw new Error((await res.json()).message);
-        loadFriends();
-    } catch (err) {
-        alert(err.message);
     }
-}
 
-async function loadFriends() {
-    try {
-        const res = await fetch("/api/friends/list");
-        const { friends } = await res.json();
-        const list = document.getElementById("friendsList");
-        list.innerHTML = friends.map(f => 
-            `<li class="task-card">${f.username}</li>`
-        ).join("");
-    } catch (err) {
-        console.error("Failed loading friends");
+    async function loadFriends() {
+        try {
+            const res = await fetch("/api/friends/list");
+            const { friends } = await res.json();
+            const list = document.getElementById("friendsList");
+            list.innerHTML = friends.map(f => 
+                `<li class="task-card">${f.username}</li>`
+            ).join("");
+        } catch (err) {
+            console.error("Failed loading friends");
+        }
     }
-}
 
     // Add click handler to friends menu item
     document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);

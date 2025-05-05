@@ -36,9 +36,12 @@
 
 /* Dark mode - TEAM: add more styles as needed */
 .dark-mode {
-    background: #1a1a1a;
-    color: #ffffff;
-    --text-color: white;
+    background: #757575;
+    --text-color: #ffffff;
+    color: #ffffff
+}
+.dark-mode * {
+    color: inherit;
 }
 
 .dark-mode .sidebar {
