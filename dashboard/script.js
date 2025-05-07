@@ -312,5 +312,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial load
     loadTasks(); // Fetch tasks from MongoDB
     document.querySelector('[data-page="home"]').click();
-
 });
