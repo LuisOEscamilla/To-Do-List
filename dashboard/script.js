@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const settingsMenu = dropdownContent.querySelector('.settings-menu');
     const settingsDropdown = settingsMenu.querySelector('.settings-dropdown');
     const darkModeToggle = document.getElementById('darkModeToggle');
+    const logoutButton = document.getElementById('logoutButton');
+
 
     let tasks = []; // All task data
     async function loadTasks() {
@@ -232,16 +234,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== DROPDOWNS =====
     // TEAM: toggle the main profile dropdown
     profileIcon.addEventListener('click', e => {
-        e.stopPropagation(); // prevent window click from closing it
+        e.stopPropagation();
         const open = dropdownContent.style.display === 'block';
         dropdownContent.style.display = open ? 'none' : 'block';
-    });
+        if (open) {
+          // ensure logout hides whenever you fully close the menu
+          logoutButton.style.display = 'none';
+        }
+      });
     
     // TEAM: toggle just the settings dropdown
     settingsMenu.addEventListener('click', e => {
         e.stopPropagation(); // prevent window click from closing it
         const open = settingsDropdown.style.display === 'block';
         settingsDropdown.style.display = open ? 'none' : 'block';
+    });
+
+    profileBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        const shown = logoutButton.style.display === 'block';
+        logoutButton.style.display = shown ? 'none' : 'block';
+    });
+
+    // TEAM: Log Out redirect
+    logoutButton.addEventListener('click', () => {
+    // adjust the path if your login page is elsewhere
+    window.location.href = '/login/index.html';
     });
     
     // TEAM: clicking outside profile-menu closes everything
@@ -294,6 +312,5 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial load
     loadTasks(); // Fetch tasks from MongoDB
     document.querySelector('[data-page="home"]').click();
-
 
 });
