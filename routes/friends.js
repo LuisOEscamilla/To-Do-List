@@ -25,6 +25,7 @@ router.post("/add", async (req, res) => {
 });
 
 router.get("/list", async (req, res) => {
+    console.log("Getting friend list for:", req.session.userId);
     const userId = req.session.userId;
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
@@ -35,5 +36,23 @@ router.get("/list", async (req, res) => {
         res.status(500).json({ message: "Error fetching friends" });
     }
 });
+
+router.get("/search", async (req, res) => {
+    const userId = req.session.userId;
+    const query = req.query.query;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+    try {
+        const users = await User.find({
+            username: { $regex: query, $options: "i" },
+            _id: { $ne: userId }
+        }).select("username");
+
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ message: "Search failed" });
+    }
+});
+
 
 module.exports = router;

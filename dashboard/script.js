@@ -282,11 +282,11 @@ document.addEventListener("DOMContentLoaded", () => {
     async function addFriend() {
         const username = document.getElementById("friendUsername").value;
         try {
-            const res = await fetch("/api/friends/add", {
+            const res = await fetch("/friends/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ friendUsername: username })
-            });
+                body: JSON.stringify({ friendUsername: user.username })
+              });              
             if (!res.ok) throw new Error((await res.json()).message);
             loadFriends();
         } catch (err) {
@@ -296,16 +296,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadFriends() {
         try {
-            const res = await fetch("/api/friends/list");
-            const { friends } = await res.json();
+            const res = await fetch("/friends/list");
+            const data = await res.json();
+            console.log("Loaded friends:", data);
+    
             const list = document.getElementById("friendsList");
-            list.innerHTML = friends.map(f => 
+            list.innerHTML = data.friends.map(f =>
                 `<li class="task-card">${f.username}</li>`
             ).join("");
         } catch (err) {
-            console.error("Failed loading friends");
+            console.error("Failed loading friends", err);
         }
     }
+    
+
+    document.getElementById("friendSearchBtn").addEventListener("click", async () => {
+        const query = document.getElementById("friendSearchInput").value;
+        if (!query) return;
+    
+        const res = await fetch(`/friends/search?query=${encodeURIComponent(query)}`);
+        const users = await res.json();
+    
+        const results = document.getElementById("searchResults");
+        results.innerHTML = "";
+    
+        users.forEach(user => {
+            const li = document.createElement("li");
+            li.className = "task-card";
+            li.textContent = user.username;
+    
+            const btn = document.createElement("button");
+            btn.textContent = "Add";
+            btn.className = "task-add-button";
+            btn.onclick = async () => {
+                const res = await fetch("/friends/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ friendUsername: user.username })
+                });
+    
+                const result = await res.json();
+                alert(result.message);
+            };
+    
+            li.appendChild(btn);
+            results.appendChild(li);
+        });
+    });
+    
 
     // Add click handler to friends menu item
     document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);

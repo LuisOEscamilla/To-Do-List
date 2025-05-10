@@ -34,6 +34,9 @@ app.use(session({
       })
 }));
 
+const friendsRouter = require("./routes/friends");
+app.use("/friends", friendsRouter);
+
 // Serve existing files
 app.use(express.static("shared"));
 app.use("/login", express.static("login"));

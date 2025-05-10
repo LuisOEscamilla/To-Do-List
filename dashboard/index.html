@@ -80,12 +80,14 @@
             <section class="friends-section" id="friendsSection" style="display: none;">
                 <h2>Friends</h2>
                 <div class="friend-search-container">
-                    <input type="text" id="friendUsername" class="friend-search" placeholder="Add friend...">
-                    <button onclick="addFriend()" class="task-add-button">Add</button>
+                    <input type="text" id="friendSearchInput" class="friend-search" placeholder="Search usernames">
+                    <button id="friendSearchBtn" class="task-add-button">Search</button>
                 </div>
-                <ul id="friendsList" class="task-list"></ul>
+                <ul id="searchResults" class="task-list"></ul>
+                <ul id="friendsList" class="task-list"></ul> 
                 <p>Connect with others.</p>
             </section>
+            
         </main>
     </div>
     <script>
