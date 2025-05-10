@@ -13,16 +13,25 @@ router.post("/add", async (req, res) => {
         if (!friend) return res.status(404).json({ message: "Friend not found" });
 
         const user = await User.findById(userId);
-        if (user.friends.includes(friend._id)) return res.status(400).json({ message: "Already friends" });
 
+        // Prevent duplicate
+        if (user.friends.includes(friend._id)) {
+            return res.status(400).json({ message: "Already friends" });
+        }
+
+        // Add each other
         user.friends.push(friend._id);
+        friend.friends.push(user._id);
+
         await user.save();
+        await friend.save();
 
         res.json({ message: "Friend added" });
     } catch (err) {
         res.status(500).json({ message: "Error adding friend" });
     }
 });
+
 
 router.get("/list", async (req, res) => {
     console.log("Getting friend list for:", req.session.userId);
