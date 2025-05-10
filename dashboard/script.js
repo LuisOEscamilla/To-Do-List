@@ -12,20 +12,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const logoutButton = document.getElementById('logoutButton');
 
-
     let tasks = []; // All task data
     async function loadTasks() {
         try {
             const res = await fetch("/api/tasks");
             const data = await res.json();
             tasks = data.tasks;
+    
+            const groupRes = await fetch("/groups/list");
+            const { groups } = await groupRes.json();
+    
+            groups.forEach(group => {
+                if (!group.tasks) return;
+                group.tasks.forEach(task => {
+                    tasks.push({
+                        ...task,
+                        group: group.name,
+                        groupId: group._id
+                    });
+                });
+            });
+    
             renderCalendarTasks();
             showTodayTasks();
         } catch (err) {
-            console.error("Failed to load tasks:", err);
+            console.error("Failed to load tasks", err);
         }
     }
-
+    
     let currentOpenDropdown = null; // Track open dropdowns
 
     function getPriorityColor(priority) {
@@ -98,7 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Show the selected section
         document.getElementById(sectionId).style.display = "block";
 
-        // TEAM: Only show task creator on calendar
         document.getElementById("taskCreator").style.display = 
             sectionId === "calendar" ? "block" : "none";
     }
@@ -121,34 +134,56 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function showTodayTasks() {
-        const todayStr = new Date().toISOString().split("T")[0];
-        const taskList = document.getElementById("taskList");
-        taskList.innerHTML = "";
-
+        const today = new Date();
+        const todayStr = today.getFullYear() + "-" +
+            String(today.getMonth() + 1).padStart(2, "0") + "-" +
+            String(today.getDate()).padStart(2, "0");
+    
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+    
         const todayTasks = tasks.filter(t => t.dueDate === todayStr && !t.completed);
-        const sortedTasks = sortTasks(todayTasks);
-
-        if (sortedTasks.length === 0) {
-            taskList.innerHTML = "<p>No tasks due today.</p>";
+        if (todayTasks.length === 0) {
+            list.innerHTML = "<p>No tasks due today.</p>";
             return;
         }
-
-        sortedTasks.forEach(t => {
-            const taskCard = document.createElement("div");
-            taskCard.classList.add("task-card");
-            taskCard.setAttribute("data-priority", t.priority);
-            taskCard.innerHTML = `
+    
+        todayTasks.forEach(t => {
+            const el = document.createElement("div");
+            el.className = "task-card";
+            el.innerHTML = `
                 <div class="task-content">
-                    <h3 class="task-title">${t.title}</h3>
-                    <p class="task-priority">Priority: ${t.priority}</p>
-                    <p class="task-due">Due: ${t.dueDate}</p>
+                    <h3>${t.title}</h3>
+                    <p>Priority: ${t.priority}</p>
+                    <p>Due: ${t.dueDate}</p>
                 </div>
-                <input type="checkbox" class="task-status">
+                <input type="checkbox">
             `;
-            taskList.appendChild(taskCard);
+    
+            el.querySelector("input").addEventListener("change", async () => {
+                if (t.groupId) {
+                    await fetch("/groups/complete-task", {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ groupId: t.groupId, title: t.title, dueDate: t.dueDate })
+                    });
+                } else {
+                    await fetch("/api/tasks/complete", {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ title: t.title, dueDate: t.dueDate })
+                    });
+                }
+    
+                t.completed = true;
+                renderCalendarTasks();
+                showTodayTasks();
+            });
+    
+            list.appendChild(el);
         });
     }
-
+    
     function sortTasks(tasks) {
         const priorityOrder = { high: 1, medium: 2, low: 3 };
         return [...tasks].sort((a, b) => 
@@ -229,10 +264,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-    
 
-    // ===== DROPDOWNS =====
-    // TEAM: toggle the main profile dropdown
+    // Toggle the main profile dropdown
     profileIcon.addEventListener('click', e => {
         e.stopPropagation();
         const open = dropdownContent.style.display === 'block';
@@ -243,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     
-    // TEAM: toggle just the settings dropdown
+    // Toggle just the settings dropdown
     settingsMenu.addEventListener('click', e => {
         e.stopPropagation(); // prevent window click from closing it
         const open = settingsDropdown.style.display === 'block';
@@ -256,13 +289,11 @@ document.addEventListener("DOMContentLoaded", () => {
         logoutButton.style.display = shown ? 'none' : 'block';
     });
 
-    // TEAM: Log Out redirect
     logoutButton.addEventListener('click', () => {
-    // adjust the path if your login page is elsewhere
     window.location.href = '/login/index.html';
     });
     
-    // TEAM: clicking outside profile-menu closes everything
+    // Clicking outside profile-menu closes everything
     window.addEventListener('click', e => {
         if (!e.target.closest('.profile-menu')) {
         dropdownContent.style.display  = 'none';
@@ -270,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    // TEAM: dark mode switch
+    // Dark mode switch
     darkModeToggle.addEventListener('change', () => {
         document.documentElement.classList.toggle(
         'dark-mode',
@@ -278,15 +309,14 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     });
 
-
     async function addFriend() {
         const username = document.getElementById("friendUsername").value;
         try {
-            const res = await fetch("/api/friends/add", {
+            const res = await fetch("/friends/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ friendUsername: username })
-            });
+                body: JSON.stringify({ friendUsername: user.username })
+              });              
             if (!res.ok) throw new Error((await res.json()).message);
             loadFriends();
         } catch (err) {
@@ -296,17 +326,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadFriends() {
         try {
-            const res = await fetch("/api/friends/list");
-            const { friends } = await res.json();
+            const res = await fetch("/friends/list");
+            const data = await res.json();
+            console.log("Loaded friends:", data);
+    
             const list = document.getElementById("friendsList");
-            list.innerHTML = friends.map(f => 
+            list.innerHTML = data.friends.map(f =>
                 `<li class="task-card">${f.username}</li>`
             ).join("");
         } catch (err) {
-            console.error("Failed loading friends");
+            console.error("Failed loading friends", err);
         }
     }
-
+    
+    document.getElementById("friendSearchBtn").addEventListener("click", async () => {
+        const query = document.getElementById("friendSearchInput").value;
+        if (!query) return;
+    
+        const res = await fetch(`/friends/search?query=${encodeURIComponent(query)}`);
+        const users = await res.json();
+    
+        const results = document.getElementById("searchResults");
+        results.innerHTML = "";
+    
+        users.forEach(user => {
+            const li = document.createElement("li");
+            li.className = "task-card";
+            li.textContent = user.username;
+    
+            const btn = document.createElement("button");
+            btn.textContent = "Add";
+            btn.className = "task-add-button";
+            btn.onclick = async () => {
+                const res = await fetch("/friends/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ friendUsername: user.username })
+                });
+    
+                const result = await res.json();
+                alert(result.message);
+            };
+    
+            li.appendChild(btn);
+            results.appendChild(li);
+        });
+    });
+    
     // Add click handler to friends menu item
     document.querySelector("[data-page='friends']").addEventListener("click", loadFriends);
     // Initial load

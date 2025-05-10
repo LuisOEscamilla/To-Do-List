@@ -11,7 +11,7 @@
         <h1 class="app-title">To-Do Hub</h1>
 
         <form id="authForm">
-            <!-- Added name field for signup -->
+            <!-- Name field for signup -->
             <input type="text" id="name" placeholder="Full Name" class="signup-field" style="display: none;">
             <input type="text" id="username" placeholder="Username" required>
             <input type="password" id="password" placeholder="Password" required>
@@ -20,7 +20,7 @@
             <button type="submit" id="authButton">Sign In</button>
         </form>
 
-        <!-- Added password requirements -->
+        <!-- Password requirements -->
         <div class="password-requirements" style="display: none;">
             Password must be at least 8 characters
         </div>
@@ -52,7 +52,7 @@
             }
         }
 
-        // TEAM: Add basic password validation
+        // Basic password validation
         document.getElementById('authForm').addEventListener('submit', function(e) {
             const isSignUp = document.getElementById('authButton').textContent === 'Sign Up';
             

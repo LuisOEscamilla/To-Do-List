@@ -3,7 +3,6 @@
     padding: 1.5rem;
 }
 
-
 .main-header {
     display: flex;
     justify-content: space-between;
@@ -96,8 +95,6 @@ body {
     background: #4a5568;
 }
 
-/* Dashboard Specific Styles */
-
 /* Calendar Styles */
 .calendar-section {
     background: white;
@@ -143,7 +140,6 @@ body {
     border-radius: 2px;
 }
 
-/* New friend search style */
 .friend-search {
     width: 100%;
     padding: 0.8rem;
@@ -153,7 +149,6 @@ body {
     font-family: inherit;
 }
 
-/* Adjusted task creator position */
 .calendar-section .task-creator {
     margin-bottom: 1.5rem;
     background: #fff;
@@ -287,7 +282,7 @@ body {
     gap: 0.5rem;
 }
 
-/* TEAM: keep calendar text black even in dark mode */
+/* Keep calendar text black even in dark mode */
 .dark-mode .calendar-day,
 .dark-mode .calendar-day-name,
 .dark-mode .calendar-task {
@@ -297,4 +292,4 @@ body {
 
 body {
     font-family: Verdana, Geneva, sans‑serif;
-  }
+}
