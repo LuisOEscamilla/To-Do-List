@@ -1,9 +1,11 @@
-const groups = [];
-
-function createGroup(name) {
-    const group = { name, tasks: [] };
-    groups.push(group);
-    renderGroup(group);
+async function loadGroups() {
+    try {
+        const res = await fetch("/groups/list");
+        const { groups } = await res.json();
+        groups.forEach(group => renderGroup(group));
+    } catch (err) {
+        console.error("Failed loading groups:", err);
+    }
 }
 
 function renderGroup(group) {
@@ -16,31 +18,33 @@ function renderGroup(group) {
     title.textContent = group.name;
     groupEl.appendChild(title);
 
+    const calendar = document.createElement("div");
+    calendar.className = "group-calendar";
+    generateMiniCalendar(calendar, group.tasks || []);
+    groupEl.appendChild(calendar);
+
     const taskInput = document.createElement("input");
     taskInput.placeholder = "New Task";
+    groupEl.appendChild(taskInput);
 
     const dueDateInput = document.createElement("input");
     dueDateInput.type = "date";
+    groupEl.appendChild(dueDateInput);
 
     const prioritySelect = document.createElement("select");
-    ["low", "medium", "high"].forEach(p => {
+    ["low", "medium", "high"].forEach(level => {
         const option = document.createElement("option");
-        option.value = p;
-        option.textContent = p.charAt(0).toUpperCase() + p.slice(1);
+        option.value = level;
+        option.textContent = level;
         prioritySelect.appendChild(option);
     });
+    groupEl.appendChild(prioritySelect);
 
     const addBtn = document.createElement("button");
     addBtn.textContent = "Add Task";
+    groupEl.appendChild(addBtn);
 
-    const taskList = document.createElement("ul");
-
-    // Mini calendar for this group
-    const calendar = document.createElement("div");
-    calendar.className = "group-calendar";
-    generateMiniCalendar(calendar, group.tasks); // initial render
-
-    addBtn.onclick = () => {
+    addBtn.onclick = async () => {
         const task = {
             title: taskInput.value,
             dueDate: dueDateInput.value,
@@ -49,132 +53,117 @@ function renderGroup(group) {
             completed: false
         };
 
-        if (!task.title || !task.dueDate) return;
+        const res = await fetch("/groups/add-task", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ groupId: group._id, task })
+        });
 
-        group.tasks.push(task);
-
-        if (window.tasks) {
-            window.tasks.push(task);
-        }
-
-        //const li = document.createElement("li");
-        //li.textContent = `${task.title} (${task.dueDate}, ${task.priority})`;
-        //taskList.appendChild(li);
-
-        // Update group's mini calendar
+        const result = await res.json();
+        group.tasks.push(result.task);
         generateMiniCalendar(calendar, group.tasks);
-
-        // Clear inputs
-        taskInput.value = "";
-        dueDateInput.value = "";
-        prioritySelect.value = "low";
     };
-
-    groupEl.appendChild(taskInput);
-    groupEl.appendChild(dueDateInput);
-    groupEl.appendChild(prioritySelect);
-    groupEl.appendChild(addBtn);
-    groupEl.appendChild(taskList);
-    groupEl.appendChild(calendar);
 
     container.appendChild(groupEl);
 }
 
 function generateMiniCalendar(container, tasks) {
-    const daysInMonth = 31;
+    container.innerHTML = "";
+
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
-
-    container.innerHTML = ""; // Clear previous calendar
-
-    // Day name headers
-    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    dayNames.forEach(name => {
-        const header = document.createElement("div");
-        header.className = "calendar-day-name";
-        header.textContent = name;
-        container.appendChild(header);
-    });
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dateStr = date.toISOString().split("T")[0];
+
         const cell = document.createElement("div");
         cell.className = "calendar-day";
+        cell.textContent = day;
 
-        const currentDate = new Date(year, month, day);
-        const dateStr = currentDate.toISOString().split("T")[0];
-
-        const label = document.createElement("div");
-        label.className = "date-label";
-        label.textContent = day;
-
-        cell.appendChild(label);
-
-        // Match tasks on this date
-        const dayTasks = tasks.filter(t => t.dueDate === dateStr);
+        const dayTasks = tasks.filter(t => t.dueDate === dateStr && !t.completed);
         dayTasks.forEach(task => {
-            const banner = document.createElement("div");
-            banner.className = `task-banner ${task.priority}`;
-            banner.textContent = `${task.title} (${task.group})`;
-            banner.title = task.title;
-
-            // Add checkbox to remove task
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "task-remove-checkbox";
-            checkbox.addEventListener("change", () => {
-                if (checkbox.checked) {
-                    removeTask(task, container, banner);
-                }
-            });
-
-            banner.appendChild(checkbox);
-            cell.appendChild(banner);
+            const tag = document.createElement("div");
+            tag.className = "task-banner " + task.priority;
+            tag.textContent = task.title;
+            cell.appendChild(tag);
         });
 
         container.appendChild(cell);
     }
 }
 
-function removeTask(task, container, banner) {
-    // Remove task from group's task list
-    const group = groups.find(g => g.name === task.group);
-    if (group) {
-        const taskIndex = group.tasks.indexOf(task);
-        if (taskIndex !== -1) {
-            group.tasks.splice(taskIndex, 1); // Remove task from group
-        }
-    }
-
-    // Remove task from global tasks array
-    if (window.tasks) {
-        const globalTaskIndex = window.tasks.indexOf(task);
-        if (globalTaskIndex !== -1) {
-            window.tasks.splice(globalTaskIndex, 1); // Remove task globally
-        }
-    }
-
-    // Remove task from the displayed task list in the group
-    const taskList = container.querySelector("ul");
-    const taskListItems = taskList.getElementsByTagName("li");
-    for (let i = 0; i < taskListItems.length; i++) {
-        const item = taskListItems[i];
-        if (item.textContent.includes(task.title)) {
-            taskList.removeChild(item);
-            break;
-        }
-    }
-
-    // Remove task banner from calendar (no longer needed)
-    container.removeChild(banner);
-
-    // Re-render the calendar to update the task removal
-    generateMiniCalendar(container, group.tasks);
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("createGroupBtn").addEventListener("click", () => {
+    const btn = document.getElementById("createGroupBtn");
+    if (!btn) {
+        console.error("Missing #createGroupBtn in HTML");
+        return;
+    }
+
+    btn.addEventListener("click", async () => {
         const groupName = prompt("Enter group name:");
-        if (groupName) createGroup(groupName);
+        if (!groupName) return;
+
+        const res = await fetch("/friends/list");
+        const { friends } = await res.json();
+
+        const selected = await new Promise(resolve => {
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.top = 0;
+            overlay.style.left = 0;
+            overlay.style.width = "100%";
+            overlay.style.height = "100%";
+            overlay.style.background = "rgba(0, 0, 0, 0.5)";
+            overlay.style.display = "flex";
+            overlay.style.flexDirection = "column";
+            overlay.style.alignItems = "center";
+            overlay.style.justifyContent = "center";
+            overlay.style.zIndex = 9999;
+
+            const box = document.createElement("div");
+            box.style.background = "white";
+            box.style.padding = "20px";
+            box.style.borderRadius = "10px";
+
+            const checkboxes = [];
+
+            friends.forEach(f => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = f._id;
+                checkboxes.push(checkbox);
+                label.appendChild(checkbox);
+                label.append(" " + f.username);
+                box.appendChild(label);
+                box.appendChild(document.createElement("br"));
+            });
+
+            const confirmBtn = document.createElement("button");
+            confirmBtn.textContent = "Create Group";
+            confirmBtn.onclick = () => {
+                const ids = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
+                document.body.removeChild(overlay);
+                resolve(ids);
+            };
+
+            box.appendChild(confirmBtn);
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+        });
+
+        const createRes = await fetch("/groups/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: groupName, friendIds: selected })
+        });
+
+        const { group } = await createRes.json();
+        renderGroup(group);
     });
+
+    loadGroups();
 });

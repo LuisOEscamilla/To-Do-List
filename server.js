@@ -46,9 +46,11 @@ app.use("/dashboard", express.static("dashboard"));
 const authRoutes = require("./routes/auth");
 const friendsRoutes = require("./routes/friends");
 const tasksRoutes = require("./routes/tasks");
+const groupRouter = require("./routes/groups");
 app.use("/api/auth", authRoutes);
 app.use("/api/friends", friendsRoutes);
 app.use("/api/tasks", tasksRoutes);
+app.use("/groups", groupRouter);
 
 // Existing page routes
 app.get("/", (req, res) => res.redirect("/login"));
